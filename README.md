@@ -39,6 +39,37 @@ py -3.13 -m venv .venv-windows
 To preview the Vercel routes locally with Node.js and the Vercel CLI:
 `npx vercel dev` (the CLI may ask you to sign in and link a project).
 
+## Deploy the Streamlit dashboard
+
+Vercel cannot host `app.py`. Streamlit needs a long-running server with
+WebSockets, while Vercel functions are short-lived and stateless — that is why
+the Vercel deployment serves the lightweight interface in `public/` instead.
+To get the full dashboard (charts, permission tables, history, comparison,
+MobSF evidence) at a public URL, deploy this same repository to a host that
+runs a persistent process.
+
+### Render
+
+The checked-in `render.yaml` is a ready-made blueprint:
+
+1. Push this repository to GitHub.
+2. Open https://dashboard.render.com/blueprints → **New Blueprint Instance**.
+3. Select the repository (and the `PROJECT PERMGUARD 2` root folder if asked).
+4. Apply. Render installs `requirements-local.txt` and starts
+   `streamlit run app.py` on `$PORT`.
+5. Open the service URL; `/_stcore/health` should return `ok`.
+
+Free instances sleep after 15 minutes without traffic and use an ephemeral
+filesystem, so scan history and cached results reset on restart or redeploy.
+Everything else behaves exactly like the local dashboard.
+
+### Streamlit Community Cloud
+
+Also possible, but Community Cloud installs the root `requirements.txt`, which
+is deliberately the minimal serverless dependency set for Vercel. Deploy from a
+branch where `requirements.txt` matches `requirements-local.txt`, or from a
+separate repository that contains only the dashboard.
+
 **Excessive-permission analysis for Android apps.**
 
 A complete, working, **100 % local** Android permission & privacy-risk analyser.

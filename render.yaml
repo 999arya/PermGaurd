@@ -1,0 +1,19 @@
+# Render blueprint for the full Streamlit dashboard.
+#
+# Vercel cannot run `app.py` (Streamlit needs a long-lived WebSocket server),
+# which is why the repository also ships the static frontend in `public/`.
+# This blueprint deploys the real dashboard on a host that runs a persistent
+# process, using the same engine as local development.
+#
+# Usage: Render Dashboard -> New -> Blueprint -> select this repository.
+services:
+  - type: web
+    name: permguard-dashboard
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements-local.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.headless true --server.address 0.0.0.0
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
