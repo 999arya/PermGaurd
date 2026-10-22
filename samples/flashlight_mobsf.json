@@ -1,0 +1,85 @@
+{
+  "_comment": "Pre-cached MobSF-style report for demo when Docker is unavailable. Synthetic flashlight APK — supporting evidence only.",
+  "package_name": "com.synthetic.flashlight",
+  "file_name": "flashlight_overprivileged.apk",
+  "security_score": 28,
+  "average_cvss": 6.4,
+  "appsec": {
+    "security_score": 28,
+    "security_score_description": "MobSF's own score, shown as-is. Not blended with PermGuard."
+  },
+  "permissions": {
+    "android.permission.CAMERA": {
+      "status": "dangerous",
+      "info": "take pictures and videos",
+      "description": "Allows the app to take pictures and videos with the camera."
+    },
+    "android.permission.READ_CONTACTS": {
+      "status": "dangerous",
+      "info": "read your contacts",
+      "description": "Allows the app to read data about your contacts."
+    },
+    "android.permission.ACCESS_FINE_LOCATION": {
+      "status": "dangerous",
+      "info": "precise location (GPS)",
+      "description": "Allows the app to get your precise location."
+    },
+    "android.permission.ACCESS_BACKGROUND_LOCATION": {
+      "status": "dangerous",
+      "info": "access location in the background",
+      "description": "Allows the app to access location in the background."
+    },
+    "android.permission.READ_SMS": {
+      "status": "dangerous",
+      "info": "read your text messages (SMS or MMS)",
+      "description": "Allows the app to read SMS messages."
+    },
+    "android.permission.READ_CALL_LOG": {
+      "status": "dangerous",
+      "info": "read call log",
+      "description": "Allows the app to read the call log."
+    },
+    "android.permission.RECORD_AUDIO": {
+      "status": "dangerous",
+      "info": "record audio",
+      "description": "Allows the app to record audio."
+    },
+    "android.permission.INTERNET": {
+      "status": "normal",
+      "info": "full network access",
+      "description": "Allows the app to create network sockets."
+    },
+    "android.permission.RECEIVE_BOOT_COMPLETED": {
+      "status": "normal",
+      "info": "run at startup",
+      "description": "Allows the app to start itself as soon as the system has finished booting."
+    }
+  },
+  "manifest_analysis": {
+    "manifest_findings": [
+      {
+        "rule": "debuggable",
+        "title": "Application is debuggable",
+        "stat": "high",
+        "desc": "Debuggable apps can be inspected with ADB and leak data on a compromised device."
+      },
+      {
+        "rule": "allow_backup",
+        "title": "Application data can be backed up",
+        "stat": "info",
+        "desc": "allowBackup is not disabled in the manifest."
+      }
+    ]
+  },
+  "exported_activities": ["com.synthetic.flashlight.MainActivity"],
+  "exported_receivers": ["com.synthetic.flashlight.BootReceiver"],
+  "exported_services": [],
+  "exported_providers": [],
+  "trackers": {
+    "detected_trackers": 1,
+    "total_trackers": 392,
+    "trackers": [
+      {"name": "Synthetic Analytics (demo)", "categories": ["Analytics"]}
+    ]
+  }
+}

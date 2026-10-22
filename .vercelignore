@@ -1,0 +1,12 @@
+.venv
+.venv-windows
+__pycache__
+.pytest_cache
+tests
+data
+reports
+uploads
+.env*
+*.apk
+*.aab
+__MACOSX

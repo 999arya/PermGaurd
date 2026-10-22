@@ -1,0 +1,151 @@
+{
+  "version": "1.0.0",
+  "last_verified": "2026-10-15",
+  "policy_version_note": "Rules are concise summaries of official Google Play policy, not verbatim legal text. Always consult the linked official pages.",
+  "sources": [
+    "https://support.google.com/googleplay/android-developer/answer/16558241",
+    "https://support.google.com/googleplay/android-developer/answer/9799150",
+    "https://support.google.com/googleplay/android-developer/answer/10144311",
+    "https://support.google.com/googleplay/android-developer/answer/11345135",
+    "https://play.google.com/about/developer-content-policy.html"
+  ],
+  "rules": [
+    {
+      "rule_id": "GP-LOC-001",
+      "title": "Background location must be core to the app's primary function",
+      "description": "Apps requesting ACCESS_BACKGROUND_LOCATION must have a genuine, user-benefiting feature that requires location while the app is not in use, and must show a prominent foreground disclosure before the system dialog.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/11345135",
+      "policy_text_summary": "Google Play restricts background location to apps whose core functionality would otherwise be impaired without it.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": ["permission:android.permission.ACCESS_BACKGROUND_LOCATION"],
+      "required_evidence": ["Core-function description", "In-app disclosure screenshot", "Feature that visibly needs background location"],
+      "applicable_context": "Android 10+ (API 29+)",
+      "assessment_logic": "If background location is declared: return INSUFFICIENT_EVIDENCE unless a purpose profile explicitly declares a continuous-location feature; then NEEDS_REVIEW. Return FAIL only if purpose is known AND has no location feature at all.",
+      "severity": "HIGH",
+      "remediation": "Remove background location and use foreground-only location, or implement geofencing/foreground service alternatives. If genuinely required, prepare a Play declaration and disclosure.",
+      "limitations": "Manifest analysis cannot verify whether a disclosure is shown or whether the feature actually exists."
+    },
+    {
+      "rule_id": "GP-SMS-001",
+      "title": "SMS and call-log permissions restricted to default handler apps",
+      "description": "Permission to read/send SMS or read call logs is limited to apps that can be declared as the user's default SMS, Phone, or Caller ID app.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/9047303",
+      "policy_text_summary": "SMS/call log permissions are permitted only for apps with core functionality requiring them and that qualify as default handlers.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": [
+        "permission:android.permission.READ_SMS",
+        "permission:android.permission.SEND_SMS",
+        "permission:android.permission.RECEIVE_SMS",
+        "permission:android.permission.READ_CALL_LOG",
+        "permission:android.permission.WRITE_CALL_LOG",
+        "permission:android.permission.PROCESS_OUTGOING_CALLS"
+      ],
+      "required_evidence": ["Default-handler declaration", "Core functionality description"],
+      "applicable_context": "All distribution via Google Play",
+      "assessment_logic": "If any SMS/call-log permission declared and purpose category is not 'messaging'/'dialer': return POTENTIAL_CONCERN (HIGH) with FAIL only when purpose is explicitly known to be non-communicational (e.g. calculator). Otherwise INSUFFICIENT_EVIDENCE.",
+      "severity": "CRITICAL",
+      "remediation": "Remove the permission and use the SMS Retriever API / ROLE_DIALER, or file a default-handler declaration.",
+      "limitations": "Whether the app qualifies as a default handler cannot be determined from the APK."
+    },
+    {
+      "rule_id": "GP-PHOTO-001",
+      "title": "Broad media/file access requires narrow justification",
+      "description": "Apps must use scoped storage, the Photo Picker, or granular media permissions; MANAGE_EXTERNAL_STORAGE (all files access) is limited to apps whose core functionality truly requires it.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/10144311",
+      "policy_text_summary": "All-files access is restricted to a narrow set of use cases such as backup, antivirus, and file managers.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": ["permission:android.permission.MANAGE_EXTERNAL_STORAGE"],
+      "required_evidence": ["Core-function declaration", "Why SAF/scoped storage is insufficient"],
+      "applicable_context": "Android 11+ (API 30+)",
+      "assessment_logic": "If MANAGE_EXTERNAL_STORAGE declared: NEEDS_REVIEW with HIGH severity unless category is file_manager/backup/security, in which case POTENTIAL_CONCERN (MEDIUM).",
+      "severity": "HIGH",
+      "remediation": "Switch to the Storage Access Framework or Photo Picker; only use all-files access where the app is genuinely a file manager or backup tool.",
+      "limitations": "Static analysis cannot prove whether SAF would suffice for the app's implementation."
+    },
+    {
+      "rule_id": "GP-PERM-001",
+      "title": "Permission must be necessary for the app's declared core functionality",
+      "description": "Every requested permission must be necessary for a feature the app clearly promotes. Requesting permissions unrelated to advertised functionality violates Play policy.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/16558241",
+      "policy_text_summary": "Apps should only request the minimum permissions necessary for their features; unnecessary permissions may lead to rejection.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": ["any_dangerous_permission"],
+      "required_evidence": ["Declared purpose/category", "Play listing feature description"],
+      "applicable_context": "All apps",
+      "assessment_logic": "Compare each dangerous permission against the category's expected set. Permissions marked UNEXPECTED produce POTENTIAL_CONCERN findings. If no purpose supplied, return INSUFFICIENT_EVIDENCE.",
+      "severity": "MEDIUM",
+      "remediation": "Remove permissions not required by the app's core features; re-request only when the user triggers the feature (runtime prompting).",
+      "limitations": "Without the Play Store listing, the declared purpose is user-supplied and may be inaccurate."
+    },
+    {
+      "rule_id": "GP-DISC-001",
+      "title": "Sensitive permission use must be disclosed to users",
+      "description": "Apps using sensitive permissions (camera, microphone, location, contacts) must clearly disclose what data is collected and how it is used, in the Play Data Safety form and in-app.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/10787469",
+      "policy_text_summary": "Data collected via sensitive permissions must be declared in the Data Safety section and disclosed in-app before collection.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": [
+        "permission:android.permission.CAMERA",
+        "permission:android.permission.RECORD_AUDIO",
+        "permission:android.permission.ACCESS_FINE_LOCATION",
+        "permission:android.permission.ACCESS_COARSE_LOCATION",
+        "permission:android.permission.READ_CONTACTS",
+        "permission:android.permission.READ_SMS"
+      ],
+      "required_evidence": ["Data safety form (not in APK)", "In-app disclosure UI (not in APK)"],
+      "applicable_context": "All apps",
+      "assessment_logic": "Always return NEEDS_REVIEW when sensitive permissions are present — the disclosure itself is outside the APK's observable scope.",
+      "severity": "MEDIUM",
+      "remediation": "Add an in-app disclosure before first access and complete the Play Data Safety declaration accurately.",
+      "limitations": "Disclosure compliance cannot be verified from static manifest analysis."
+    },
+    {
+      "rule_id": "GP-BG-001",
+      "title": "Background execution must respect platform limits",
+      "description": "Apps must not circumvent Android background restrictions (Doze, background execution limits) except for narrowly permitted foreground-service use cases.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/9799150",
+      "policy_text_summary": "Apps must use foreground services appropriately and not abuse battery exemptions.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": [
+        "permission:android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+        "permission:android.permission.RECEIVE_BOOT_COMPLETED"
+      ],
+      "required_evidence": ["Declared background feature", "Foreground service notification design"],
+      "applicable_context": "Android 8.0+",
+      "assessment_logic": "If battery-optimisation exemption requested without a genuine always-on feature in the category profile: POTENTIAL_CONCERN (MEDIUM). With boot-completed plus sensitive permissions: NEEDS_REVIEW.",
+      "severity": "MEDIUM",
+      "remediation": "Use foreground services with a visible notification instead of battery exemptions.",
+      "limitations": "Actual background behaviour requires runtime observation."
+    },
+    {
+      "rule_id": "GP-CHILD-001",
+      "title": "Ads and tracking restricted for families-directed apps",
+      "description": "Apps designed for families must not use the advertising ID or certain tracking permissions.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/9893335",
+      "policy_text_summary": "Families policy limits data collection and advertising in child-directed apps.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": ["permission:android.permission.ACCESS_ADSERVICES_AD_ID"],
+      "required_evidence": ["Declared target audience (Play Console setting, not in APK)"],
+      "applicable_context": "Play Console target-audience declaration",
+      "assessment_logic": "If ad ID permission present: NEEDS_REVIEW — target audience cannot be determined from the APK.",
+      "severity": "MEDIUM",
+      "remediation": "Declare target audience accurately; disable ad ID for families content.",
+      "limitations": "Target audience is a Play Console setting, not present in the APK."
+    },
+    {
+      "rule_id": "GP-PKG-001",
+      "title": "Package visibility and installed-app inventory must be justified",
+      "description": "Querying the full list of installed apps is considered sensitive and requires a core-function declaration.",
+      "source_url": "https://support.google.com/googleplay/android-developer/answer/11365659",
+      "policy_text_summary": "Apps requesting QUERY_ALL_PACKAGES must justify why narrower <queries> declarations are insufficient.",
+      "last_verified": "2026-10-15",
+      "trigger_conditions": ["permission:android.permission.QUERY_ALL_PACKAGES"],
+      "required_evidence": ["Core-function declaration explaining why package visibility is required"],
+      "applicable_context": "Android 11+ (API 30+)",
+      "assessment_logic": "If declared and category not in (security, file_manager, productivity): POTENTIAL_CONCERN (HIGH); otherwise NEEDS_REVIEW.",
+      "severity": "HIGH",
+      "remediation": "Replace with targeted <queries> declarations for the specific packages or intents needed.",
+      "limitations": "Legitimate use may exist beyond the known categories."
+    }
+  ]
+}

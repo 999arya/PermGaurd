@@ -1,0 +1,134 @@
+{
+  "calculator": {
+    "file": "calculator.apk",
+    "synthetic": true,
+    "package": "com.synthetic.calculator",
+    "expected_risk": "LOW",
+    "expected_findings": [],
+    "expected_verdicts": {
+      "android.permission.VIBRATE": "JUSTIFIED"
+    },
+    "permissions": [
+      "android.permission.VIBRATE"
+    ],
+    "justification": "Local computation only \u2014 VIBRATE is normal-tier and expected. No sensitive permission should appear; risk must be LOW."
+  },
+  "navigation": {
+    "file": "navigation.apk",
+    "synthetic": true,
+    "package": "com.synthetic.navigation",
+    "expected_risk": "LOW",
+    "expected_findings": [],
+    "expected_verdicts": {
+      "android.permission.ACCESS_FINE_LOCATION": "JUSTIFIED",
+      "android.permission.INTERNET": "JUSTIFIED"
+    },
+    "permissions": [
+      "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.ACCESS_COARSE_LOCATION",
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.VIBRATE",
+      "android.permission.WAKE_LOCK",
+      "android.permission.FOREGROUND_SERVICE"
+    ],
+    "justification": "Location IS the core input of navigation, and INTERNET/WAKE_LOCK/FOREGROUND_SERVICE support it. All are category-expected, so no over-privilege finding is expected; risk must be LOW."
+  },
+  "voice_recorder": {
+    "file": "voice_recorder.apk",
+    "synthetic": true,
+    "package": "com.synthetic.voicerecorder",
+    "expected_risk": "LOW",
+    "expected_findings": [],
+    "expected_verdicts": {
+      "android.permission.RECORD_AUDIO": "JUSTIFIED"
+    },
+    "permissions": [
+      "android.permission.RECORD_AUDIO",
+      "android.permission.FOREGROUND_SERVICE",
+      "android.permission.POST_NOTIFICATIONS",
+      "android.permission.WAKE_LOCK"
+    ],
+    "justification": "RECORD_AUDIO is the defining capability of a recorder; foreground service + notification keep it user-visible. All expected; risk must be LOW."
+  },
+  "photo_editor": {
+    "file": "photo_editor.apk",
+    "synthetic": true,
+    "package": "com.synthetic.photoeditor",
+    "expected_risk": "MEDIUM",
+    "expected_findings": [
+      "PG-PURPOSE-CRITICAL"
+    ],
+    "expected_verdicts": {
+      "android.permission.READ_MEDIA_IMAGES": "JUSTIFIED",
+      "android.permission.RECORD_AUDIO": "UNEXPECTED"
+    },
+    "permissions": [
+      "android.permission.READ_MEDIA_IMAGES",
+      "android.permission.CAMERA",
+      "android.permission.RECORD_AUDIO",
+      "android.permission.INTERNET"
+    ],
+    "justification": "READ_MEDIA_IMAGES + CAMERA are expected for editing. RECORD_AUDIO (microphone) has no photo-editing function \u2014 must be flagged UNEXPECTED with HIGH sensitivity -> purpose finding expected; risk must be MEDIUM."
+  },
+  "shopping": {
+    "file": "shopping.apk",
+    "synthetic": true,
+    "package": "com.synthetic.shop",
+    "expected_risk": "MEDIUM",
+    "expected_findings": [],
+    "expected_verdicts": {
+      "android.permission.INTERNET": "JUSTIFIED",
+      "android.permission.ACCESS_NETWORK_STATE": "JUSTIFIED",
+      "android.permission.POST_NOTIFICATIONS": "JUSTIFIED",
+      "android.permission.CAMERA": "JUSTIFIED",
+      "android.permission.READ_MEDIA_IMAGES": "PLAUSIBLE",
+      "android.permission.ACCESS_FINE_LOCATION": "PLAUSIBLE",
+      "android.permission.ACCESS_COARSE_LOCATION": "PLAUSIBLE"
+    },
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.POST_NOTIFICATIONS",
+      "android.permission.CAMERA",
+      "android.permission.READ_MEDIA_IMAGES",
+      "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.ACCESS_COARSE_LOCATION"
+    ],
+    "justification": "A realistic shopping app: INTERNET + network-state + notifications are core; CAMERA (barcode/cheque), READ_MEDIA_IMAGES (product photo) and coarse/fine location (delivery estimate) are all optional-but-plausible for this category. No permission is UNEXPECTED \u2014 verdicts are JUSTIFIED/PLAUSIBLE \u2014 but the file+network combo and disclosure checks keep the score in the MEDIUM band (~40)."
+  },
+  "flashlight_overprivileged": {
+    "file": "flashlight_overprivileged.apk",
+    "synthetic": true,
+    "package": "com.synthetic.flashlight",
+    "expected_risk": "HIGH",
+    "expected_findings": [
+      "PG-PURPOSE-CRITICAL",
+      "ORG-DENY-001",
+      "ESC-DEBUG-001"
+    ],
+    "expected_verdicts": {
+      "android.permission.CAMERA": "JUSTIFIED",
+      "android.permission.READ_CONTACTS": "UNEXPECTED",
+      "android.permission.READ_SMS": "UNEXPECTED",
+      "android.permission.READ_CALL_LOG": "UNEXPECTED",
+      "android.permission.ACCESS_FINE_LOCATION": "UNEXPECTED",
+      "android.permission.ACCESS_BACKGROUND_LOCATION": "UNEXPECTED",
+      "android.permission.RECORD_AUDIO": "UNEXPECTED",
+      "android.permission.INTERNET": "UNEXPECTED",
+      "android.permission.RECEIVE_BOOT_COMPLETED": "UNEXPECTED"
+    },
+    "permissions": [
+      "android.permission.CAMERA",
+      "android.permission.READ_CONTACTS",
+      "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.ACCESS_BACKGROUND_LOCATION",
+      "android.permission.READ_SMS",
+      "android.permission.INTERNET",
+      "android.permission.READ_CALL_LOG",
+      "android.permission.RECORD_AUDIO",
+      "android.permission.RECEIVE_BOOT_COMPLETED"
+    ],
+    "justification": "Deliberately over-privileged: a flashlight needs only CAMERA (LED control). Contacts, SMS, call log, fine+background location, microphone, internet and boot-receiver are all over-privilege for this category; SMS/call log violate the default org policy deny-list; debuggable=true triggers the escalation check; DEX strings trigger kernel/root deep-scan checks; a staged ELF asset is present. Risk must be HIGH."
+  }
+}

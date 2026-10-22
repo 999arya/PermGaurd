@@ -1,0 +1,70 @@
+# PermissionGuard AI — Organisational permission policy
+#
+# Edit this file to encode YOUR organisation's rules. Every scan checks the
+# uploaded APK's permissions against these rules and raises findings that are
+# clearly labelled source_framework: "org_policy" (kept separate from
+# Google Play / OWASP findings).
+#
+# Flags permissions that exceed a configurable organisational policy.
+
+policy:
+  name: "Default Baseline Policy"
+  version: "1.0"
+  description: >
+    Baseline corporate policy for general-purpose applications. Tune the
+    lists below to your organisation's risk appetite.
+
+  # --- Never allowed, regardless of app purpose -------------------------
+  # Violations are scored CRITICAL.
+  denied_permissions:
+    - "android.permission.READ_SMS"
+    - "android.permission.SEND_SMS"
+    - "android.permission.RECEIVE_SMS"
+    - "android.permission.READ_CALL_LOG"
+    - "android.permission.WRITE_CALL_LOG"
+    - "android.permission.PROCESS_OUTGOING_CALLS"
+    - "android.permission.ANSWER_PHONE_CALLS"
+
+  # --- Always require human review, allowed only with justification ----
+  # Violations are scored HIGH and marked NEEDS_REVIEW.
+  review_permissions:
+    - "android.permission.ACCESS_BACKGROUND_LOCATION"
+    - "android.permission.REQUEST_INSTALL_PACKAGES"
+    - "android.permission.SYSTEM_ALERT_WINDOW"
+    - "android.permission.MANAGE_EXTERNAL_STORAGE"
+    - "android.permission.BIND_ACCESSIBILITY_SERVICE"
+    - "android.permission.QUERY_ALL_PACKAGES"
+
+  # --- Sensitivity cap --------------------------------------------------
+  # No permission above this tier may appear unless its category profile
+  # explicitly expects it. One of: NONE, LOW, MODERATE, HIGH, CRITICAL
+  max_sensitivity_tier: "CRITICAL"
+
+  # --- Category-scoped allow-lists --------------------------------------
+  # If a category is listed, ONLY those permissions are permitted for apps
+  # of that category (everything else is flagged as not required).
+  category_allowed_permissions:
+    calculator: []
+    flashlight:
+      - "android.permission.CAMERA"
+    navigation:
+      - "android.permission.ACCESS_FINE_LOCATION"
+      - "android.permission.ACCESS_COARSE_LOCATION"
+      - "android.permission.ACCESS_BACKGROUND_LOCATION"
+      - "android.permission.INTERNET"
+      - "android.permission.ACCESS_NETWORK_STATE"
+      - "android.permission.VIBRATE"
+
+  # --- Deny-listed combinations (org specific) --------------------------
+  # Each entry: list of permissions that must NOT co-occur.
+  denied_combinations:
+    - ["android.permission.READ_CONTACTS", "android.permission.ACCESS_FINE_LOCATION"]
+    - ["android.permission.RECORD_AUDIO", "android.permission.ACCESS_BACKGROUND_LOCATION"]
+    - ["android.permission.MANAGE_EXTERNAL_STORAGE", "android.permission.INTERNET"]
+    - ["android.permission.READ_SMS", "android.permission.READ_CONTACTS"]
+
+  # --- Background execution policy --------------------------------------
+  allow_background_location: false
+  allow_background_execution_indicators: true
+
+enabled: true

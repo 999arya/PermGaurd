@@ -1,0 +1,353 @@
+{
+  "version": "1.0.0",
+  "last_verified": "2026-10-15",
+  "notes": "Category profiles express EXPECTED permissions for an app category — they are allow-lists for necessity checking, not hard security rules. Expected != automatically justified; unexpected != automatically malicious. verdict logic: expected->JUSTIFIED, plausible (adjacent)->PLAUSIBLE, unexpected->UNEXPECTED, no purpose->UNDETERMINED.",
+  "keywords": {
+    "calculator": ["calculat", "math", "arithmetic", "converter"],
+    "navigation": ["nav", "map", "gps", "route", "direction", "driving", "transit"],
+    "voice_recorder": ["record", "voice", "audio", "memo", "dictaphone"],
+    "camera": ["camera", "photo", "snap", "shoot"],
+    "photo_editor": ["edit", "photo editor", "filter", "retouch", "collage"],
+    "flashlight": ["flash", "torch", "lamp", "light"],
+    "messaging": ["messag", "chat", "sms", "messenger", "talk"],
+    "music": ["music", "player", "audio player", "podcast", "stream"],
+    "weather": ["weather", "forecast"],
+    "social": ["social", "feed", "post", "profile"],
+    "banking": ["bank", "pay", "wallet", "finance"],
+    "fitness": ["fit", "health", "workout", "run", "step", "gym"],
+    "file_manager": ["file", "explorer", "manager", "storage"],
+    "email": ["mail", "email", "inbox"],
+    "productivity": ["note", "task", "to-do", "organizer", "office"],
+    "alarm": ["alarm", "clock", "timer", "stopwatch"],
+    "dialer": ["dialer", "phone", "call"],
+    "games": ["game", "play"],
+    "news": ["news", "headline"],
+    "shopping": ["shop", "store", "cart", "buy"]
+  },
+  "categories": {
+    "calculator": {
+      "label": "Calculator / Converter",
+      "expected_permissions": [
+        "android.permission.VIBRATE"
+      ],
+      "optional_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "suggested_features": ["Arithmetic", "Unit conversion", "History"],
+      "rationale": "A calculator performs local computation; VIBRATE provides haptic button feedback. It needs no sensitive resource access.",
+      "common_excess_risks": ["Contacts", "Location", "Storage", "SMS"]
+    },
+    "navigation": {
+      "label": "Navigation / Maps",
+      "expected_permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.FOREGROUND_SERVICE"
+      ],
+      "optional_permissions": ["android.permission.ACCESS_BACKGROUND_LOCATION", "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_CONNECT"],
+      "suggested_features": ["Turn-by-turn directions", "Traffic", "Offline maps"],
+      "rationale": "Location is the core input of navigation; background access is justified only for guidance while the screen is off.",
+      "common_excess_risks": ["Contacts", "SMS", "Microphone"]
+    },
+    "voice_recorder": {
+      "label": "Voice Recorder",
+      "expected_permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.WAKE_LOCK", "android.permission.READ_MEDIA_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"],
+      "suggested_features": ["Record", "Playback", "Export"],
+      "rationale": "Microphone is the defining capability; storage is needed only to persist recordings.",
+      "common_excess_risks": ["Location", "Contacts", "Background location"]
+    },
+    "camera": {
+      "label": "Camera",
+      "expected_permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO", "android.permission.ACCESS_FINE_LOCATION", "android.permission.FLASH"],
+      "suggested_features": ["Photo capture", "Video capture", "Geotagging"],
+      "rationale": "Camera and (for video) microphone are core; location only if geotagging is an advertised feature.",
+      "common_excess_risks": ["Contacts", "SMS", "Call log"]
+    },
+    "photo_editor": {
+      "label": "Photo Editor",
+      "expected_permissions": [
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
+      ],
+      "optional_permissions": ["android.permission.CAMERA", "android.permission.READ_MEDIA_VIDEO", "android.permission.INTERNET"],
+      "suggested_features": ["Crop", "Filters", "Stickers", "Export"],
+      "rationale": "Editing requires read access to the selected image; the Photo Picker / partial access is preferred over full storage access.",
+      "common_excess_risks": ["Location", "Contacts", "Microphone", "MANAGE_EXTERNAL_STORAGE"]
+    },
+    "flashlight": {
+      "label": "Flashlight / Torch",
+      "expected_permissions": [
+        "android.permission.CAMERA"
+      ],
+      "optional_permissions": ["android.permission.VIBRATE"],
+      "suggested_features": ["On/Off toggle", "Strobe"],
+      "rationale": "Camera permission is used to control the LED on most devices; no data capture is required.",
+      "common_excess_risks": ["Location", "Contacts", "Storage", "SMS", "Microphone"]
+    },
+    "messaging": {
+      "label": "Messaging / Chat",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_MEDIA_IMAGES"
+      ],
+      "optional_permissions": ["android.permission.READ_CONTACTS", "android.permission.ACCESS_FINE_LOCATION", "android.permission.VIBRATE", "android.permission.FOREGROUND_SERVICE", "android.permission.WAKE_LOCK", "android.permission.BLUETOOTH"],
+      "suggested_features": ["Text chat", "Media sharing", "Voice notes"],
+      "rationale": "Messaging legitimately needs network, notifications and media capture; contacts are optional (import).",
+      "common_excess_risks": ["READ_SMS", "Call log", "Background location", "All-files access"]
+    },
+    "music": {
+      "label": "Music / Audio Player",
+      "expected_permissions": [
+        "android.permission.READ_MEDIA_AUDIO",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.INTERNET", "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_CONNECT"],
+      "suggested_features": ["Playback", "Playlists", "Bluetooth output"],
+      "rationale": "Playback needs audio media access and a foreground service; network only for streaming.",
+      "common_excess_risks": ["Contacts", "Location", "Camera"]
+    },
+    "weather": {
+      "label": "Weather",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
+      "optional_permissions": ["android.permission.ACCESS_FINE_LOCATION", "android.permission.POST_NOTIFICATIONS"],
+      "suggested_features": ["Forecast", "Severe alerts"],
+      "rationale": "Weather needs a location (city-level suffices) and network.",
+      "common_excess_risks": ["Contacts", "SMS", "Microphone"]
+    },
+    "social": {
+      "label": "Social",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.READ_CONTACTS", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"],
+      "suggested_features": ["Feed", "Stories", "Messaging"],
+      "rationale": "Content creation and sharing are core; contacts/location are optional discovery features.",
+      "common_excess_risks": ["SMS", "Call log", "Background location", "Accessibility"]
+    },
+    "banking": {
+      "label": "Finance / Banking",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.READ_SMS", "android.permission.READ_PHONE_STATE"],
+      "suggested_features": ["Balance", "Transfers", "Cheque deposit (camera)"],
+      "rationale": "Network, biometrics and camera (deposit) are core; SMS only for OTP with a default-handler declaration.",
+      "common_excess_risks": ["Contacts", "Location", "All-files access", "Accessibility service"]
+    },
+    "fitness": {
+      "label": "Health / Fitness",
+      "expected_permissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.BODY_SENSORS", "android.permission.BLUETOOTH", "android.permission.BLUETOOTH_CONNECT", "android.permission.ACCESS_BACKGROUND_LOCATION"],
+      "suggested_features": ["Step counting", "Workout tracking", "Wearable sync"],
+      "rationale": "Activity recognition is core; location for outdoor routes; background location only for run tracking with screen off.",
+      "common_excess_risks": ["SMS", "Call log", "Contacts without sync feature"]
+    },
+    "file_manager": {
+      "label": "File Manager",
+      "expected_permissions": [
+        "android.permission.MANAGE_EXTERNAL_STORAGE"
+      ],
+      "optional_permissions": ["android.permission.INTERNET", "android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO", "android.permission.READ_MEDIA_AUDIO"],
+      "suggested_features": ["Browse", "Copy/move", "Compress", "Share"],
+      "rationale": "All-files access is the defining capability of a file manager (still requires Play declaration).",
+      "common_excess_risks": ["Microphone", "Location", "Contacts"]
+    },
+    "email": {
+      "label": "Email",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.CAMERA",
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ],
+      "optional_permissions": ["android.permission.GET_ACCOUNTS", "android.permission.READ_CONTACTS"],
+      "suggested_features": ["Sync", "Attachments", "Calendar invites"],
+      "rationale": "Network and notifications are core; attachments use the camera/picker.",
+      "common_excess_risks": ["SMS", "Call log", "Background location"]
+    },
+    "productivity": {
+      "label": "Productivity / Notes",
+      "expected_permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.READ_MEDIA_IMAGES", "android.permission.CAMERA", "android.permission.READ_CALENDAR", "android.permission.WRITE_CALENDAR", "android.permission.INTERNET"],
+      "suggested_features": ["Notes", "Reminders", "Sync"],
+      "rationale": "Core function is local; attachments and reminders justify optional access.",
+      "common_excess_risks": ["Location", "Contacts", "Microphone", "SMS"]
+    },
+    "alarm": {
+      "label": "Alarm / Clock",
+      "expected_permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ],
+      "optional_permissions": ["android.permission.WAKE_LOCK", "android.permission.FOREGROUND_SERVICE", "android.permission.USE_FULL_SCREEN_INTENT"],
+      "suggested_features": ["Alarm", "Timer", "Stopwatch"],
+      "rationale": "Alarms require exact scheduling, boot persistence and haptics.",
+      "common_excess_risks": ["Location", "Contacts", "Storage", "Network"]
+    },
+    "dialer": {
+      "label": "Phone / Dialer",
+      "expected_permissions": [
+        "android.permission.CALL_PHONE",
+        "android.permission.READ_PHONE_STATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.READ_CONTACTS", "android.permission.READ_CALL_LOG", "android.permission.WRITE_CALL_LOG", "android.permission.RECORD_AUDIO", "android.permission.ANSWER_PHONE_CALLS"],
+      "suggested_features": ["Dial", "Call history", "Contacts"],
+      "rationale": "Dialer role justifies call and call-log access when declared as default handler.",
+      "common_excess_risks": ["All-files access", "Background location"]
+    },
+    "games": {
+      "label": "Games",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.VIBRATE"
+      ],
+      "optional_permissions": ["android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_MEDIA_IMAGES", "android.permission.ACCESS_ADSERVICES_AD_ID"],
+      "suggested_features": ["Gameplay", "Leaderboards", "Ads"],
+      "rationale": "Leaderboards/ads need network; storage only for save data.",
+      "common_excess_risks": ["Contacts", "SMS", "Location", "Microphone", "Call log"]
+    },
+    "news": {
+      "label": "News",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.ACCESS_ADSERVICES_AD_ID"],
+      "suggested_features": ["Articles", "Bookmarks", "Breaking alerts"],
+      "rationale": "Content is network-backed; notifications for breaking news.",
+      "common_excess_risks": ["Contacts", "Location", "Camera", "Storage"]
+    },
+    "shopping": {
+      "label": "Shopping / E-commerce",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "optional_permissions": ["android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.READ_MEDIA_IMAGES"],
+      "suggested_features": ["Browse", "Checkout", "Order tracking"],
+      "rationale": "Network is core; camera for barcode/cheque scans; location for delivery estimates.",
+      "common_excess_risks": ["SMS", "Call log", "Microphone", "Contacts"]
+    },
+    "connectivity_tool": {
+      "label": "Connectivity / Device Utility",
+      "expected_permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.INTERNET"
+      ],
+      "optional_permissions": ["android.permission.NEARBY_WIFI_DEVICES", "android.permission.ACCESS_FINE_LOCATION", "android.permission.WRITE_SETTINGS"],
+      "suggested_features": ["Device pairing", "Transfer", "Status"],
+      "rationale": "Utilities for connected devices legitimately use Bluetooth/Wi-Fi.",
+      "common_excess_risks": ["Contacts", "SMS", "Call log"]
+    },
+    "enterprise": {
+      "label": "Enterprise / MDM",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.REQUEST_INSTALL_PACKAGES",
+        "android.permission.BIND_DEVICE_ADMIN",
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.QUERY_ALL_PACKAGES"
+      ],
+      "optional_permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE"],
+      "suggested_features": ["Device management", "App distribution", "Policy enforcement"],
+      "rationale": "Managed-device apps have unusually broad privileges by design.",
+      "common_excess_risks": ["Personal data access without business need"]
+    },
+    "accessibility": {
+      "label": "Accessibility",
+      "expected_permissions": [
+        "android.permission.BIND_ACCESSIBILITY_SERVICE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "optional_permissions": ["android.permission.READ_CONTACTS", "android.permission.CAMERA"],
+      "suggested_features": ["Screen reading", "Tap assistance"],
+      "rationale": "Accessibility services are inherently powerful; must be scoped to the stated assistive function.",
+      "common_excess_risks": ["Using accessibility for ad automation or credential capture"]
+    },
+    "security": {
+      "label": "Security / Antivirus",
+      "expected_permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.QUERY_ALL_PACKAGES",
+        "android.permission.MANAGE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ],
+      "optional_permissions": ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.PACKAGE_USAGE_STATS"],
+      "suggested_features": ["Scan", "Web protection", "App locking"],
+      "rationale": "Security products require broad visibility by design (still requires Play declaration).",
+      "common_excess_risks": ["Uploading user files without disclosure"]
+    },
+    "personalization": {
+      "label": "Personalization / Themes",
+      "expected_permissions": ["android.permission.SET_WALLPAPER"],
+      "optional_permissions": ["android.permission.INTERNET", "android.permission.READ_MEDIA_IMAGES"],
+      "suggested_features": ["Wallpapers", "Icon packs"],
+      "rationale": "Themes modify local appearance.",
+      "common_excess_risks": ["Location", "Contacts", "SMS"]
+    },
+    "health": {
+      "label": "Health",
+      "expected_permissions": ["android.permission.INTERNET", "android.permission.POST_NOTIFICATIONS"],
+      "optional_permissions": ["android.permission.BODY_SENSORS", "android.permission.ACTIVITY_RECOGNITION", "android.permission.health.READ_STEPS"],
+      "suggested_features": ["Vitals logging", "Reminders"],
+      "rationale": "Health logging needs sensor access with explicit consent.",
+      "common_excess_risks": ["Contacts", "SMS", "Advertising ID"]
+    }
+  }
+}

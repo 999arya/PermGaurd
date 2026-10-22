@@ -1,0 +1,33 @@
+# PermissionGuard AI — application configuration
+app:
+  name: "PermissionGuard AI"
+  tagline: "Excessive-permission analysis for Android apps"
+  version: "1.0.0"
+  # Offline by default. No external API calls, ever, unless explicitly enabled.
+  offline_mode: true
+
+limits:
+  # Upload validation — treat all uploads as untrusted input
+  max_apk_bytes: 262144000        # 250 MB
+  warn_apk_bytes: 104857600       # 100 MB -> warn
+  max_zip_entries: 65536
+  max_uncompressed_bytes: 1073741824   # 1 GB total
+  max_compression_ratio: 200      # zip-bomb guard
+  max_dex_strings_scanned: 400000
+  max_manifest_bytes: 4194304     # 4 MB decoded manifest
+  max_asset_paths_scanned: 20000
+
+scan:
+  # default depth when user picks "Auto"
+  auto_deep_min_sensitivity_hits: 1   # any HIGH/CRITICAL permission triggers deep
+  deep_on_background_access: true
+  deep_on_escalation_signals: true
+
+storage:
+  db_path: "data/scans.db"
+  keep_uploaded_files: false      # uploads are deleted after analysis
+  reports_dir: "reports"
+
+rules:
+  knowledgebase_dir: "knowledgebase"
+  config_dir: "config"

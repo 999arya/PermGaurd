@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual environments
+.venv/
+.venv-windows/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Uploaded APKs & scan data (PRIVACY: never commit user uploads or scan DB)
+uploads/
+*.apk
+*.aab
+data/scans.db
+data/*.db
+data/scan_cache/
+
+# Generated reports (may contain user data)
+reports/*
+!reports/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+.vercel/
+__MACOSX/
+node_modules/
+*.key
+*.pem

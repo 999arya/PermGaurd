@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "last_verified": "2026-10-15",
+  "disclaimer": "These are PermissionGuard application-specific detection rules INFORMED BY OWASP guidance. They are NOT official OWASP automated tests, NOT MASTG test executions, and NOT MASVS certifications. Where a formal requirement applies it is referenced by ID; otherwise the check is labelled as an application-specific rule informed by OWASP.",
+  "sources": [
+    "https://mas.owasp.org/",
+    "https://mas.owasp.org/MASVS/MASVS-PRIVACY/",
+    "https://mas.owasp.org/MASVS/PRIVACY/",
+    "https://mas.owasp.org/MASWE/MASVS-PRIVACY/MASWE-0066/",
+    "https://mas.owasp.org/MASTG/"
+  ],
+  "masvs_mapping": {
+    "MASVS-PRIVACY-1": "The app does not unnecessarily access sensitive data or device identifiers.",
+    "MASVS-PRIVACY-2": "The app only accesses the minimum data required for its stated purpose (data minimisation).",
+    "MASVS-PRIVACY-3": "Data is handled according to privacy best practices (collection, disclosure, retention)."
+  },
+  "rules": [
+    {
+      "rule_id": "OWASP-PRIV-001",
+      "title": "Excessive permission requests beyond declared functionality",
+      "masvs_reference": "MASVS-PRIVACY-1, MASVS-PRIVACY-2",
+      "mastg_reference": null,
+      "rule_type": "application_specific_rule_informed_by_owasp",
+      "description": "The application requests permissions that are not required by any feature implied by its declared category. This is an application-specific check informed by OWASP's data minimisation principle (MASWE-0066: excessive permissions).",
+      "source_url": "https://mas.owasp.org/MASWE/MASVS-PRIVACY/MASWE-0066/",
+      "trigger_conditions": ["any_dangerous_permission_and_purpose_known"],
+      "required_evidence": ["Declared purpose/category", "Manifest permission list"],
+      "assessment_logic": "For each dangerous permission outside the category's expected set, raise POTENTIAL_CONCERN with evidence naming both the permission and the category.",
+      "severity": "MEDIUM",
+      "confidence": "MEDIUM",
+      "remediation": "Remove the unneeded permission, or gate it behind an explicit user-triggered feature with a clear rationale.",
+      "limitations": "Purpose is user-declared; some legitimate uses may not be covered by our category profiles."
+    },
+    {
+      "rule_id": "OWASP-PRIV-002",
+      "title": "Sensitive data access without a less-intrusive alternative",
+      "masvs_reference": "MASVS-PRIVACY-2",
+      "mastg_reference": null,
+      "rule_type": "application_specific_rule_informed_by_owasp",
+      "description": "Where a known less-intrusive alternative exists for a requested permission (e.g. Photo Picker instead of full media access, ACTION_DIAL instead of CALL_PHONE), its use should be preferred.",
+      "source_url": "https://mas.owasp.org/MASWE/MASVS-PRIVACY/MASWE-0066/",
+      "trigger_conditions": ["permission_with_known_alternative"],
+      "required_evidence": ["Permission declared", "Alternative documented in knowledge base"],
+      "assessment_logic": "If the knowledge base lists alternatives for a requested permission AND the permission is not expected for the category: raise LOW-severity finding recommending the alternative.",
+      "severity": "LOW",
+      "confidence": "HIGH",
+      "remediation": "Adopt the documented alternative: apply the 'alternatives' entry from the permission's knowledge-base record.",
+      "limitations": "Architectural constraints may make the alternative impractical without deeper code review."
+    },
+    {
+      "rule_id": "OWASP-PRIV-003",
+      "title": "Missing justification for sensitive access",
+      "masvs_reference": "MASVS-PRIVACY-1",
+      "mastg_reference": null,
+      "rule_type": "application_specific_rule_informed_by_owasp",
+      "description": "High/critical-sensitivity permissions should map to a documented user benefit. Access without a traceable rationale prevents informed consent.",
+      "source_url": "https://mas.owasp.org/MASVS/MASVS-PRIVACY/",
+      "trigger_conditions": ["permission_sensitivity:HIGH", "permission_sensitivity:CRITICAL"],
+      "required_evidence": ["Purpose profile", "Permission list"],
+      "assessment_logic": "If a HIGH/CRITICAL permission is UNEXPECTED for the category: POTENTIAL_CONCERN (HIGH). If purpose unknown: INSUFFICIENT_EVIDENCE with a prompt to supply the purpose.",
+      "severity": "HIGH",
+      "confidence": "MEDIUM",
+      "remediation": "Document the user-facing feature that requires the data, or remove the permission.",
+      "limitations": "Does not inspect the app's privacy policy or store listing."
+    },
+    {
+      "rule_id": "OWASP-PRIV-004",
+      "title": "Permission combination increases privacy exposure",
+      "masvs_reference": "MASVS-PRIVACY-3",
+      "mastg_reference": null,
+      "rule_type": "application_specific_rule_informed_by_owasp",
+      "description": "Certain permission combinations multiply privacy impact (e.g. identifier + precise location + network). Individual permission review misses this compounding risk.",
+      "source_url": "https://mas.owasp.org/MASVS/MASVS-PRIVACY/",
+      "trigger_conditions": ["two_or_more_critical_permissions", "permission_pair_rule"],
+      "required_evidence": ["Both permissions declared"],
+      "assessment_logic": "Delegated to the combination detector; each hit raises an indicator finding with severity from the combination rule.",
+      "severity": "MEDIUM",
+      "confidence": "MEDIUM",
+      "remediation": "Split data flows, reduce scope, or drop the least-justified permission of the pair.",
+      "limitations": "Combinations are indicators for review, not proof of data flow between the permissions."
+    },
+    {
+      "rule_id": "OWASP-ARCH-001",
+      "title": "Platform anti-abuse features weakened",
+      "masvs_reference": "MASVS-RESILIENCE-1 (contextual)",
+      "mastg_reference": null,
+      "rule_type": "application_specific_rule_informed_by_owasp",
+      "description": "Flags manifest configurations that weaken platform protections: debuggable builds, cleartext traffic, unrestricted backup, or shared UID — each increases exposure if the app handles sensitive data.",
+      "source_url": "https://mas.owasp.org/MASTG/",
+      "trigger_conditions": ["attribute:debuggable=true", "attribute:allowBackup=true", "attribute:usesCleartextTraffic=true", "attribute:sharedUserId"],
+      "required_evidence": "Manifest attribute values",
+      "assessment_logic": "debuggable=true -> HIGH finding; cleartext=true -> MEDIUM; allowBackup=true -> LOW (INFO for enterprise); sharedUserId -> HIGH.",
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "remediation": "Disable debugging in release builds, enable network security config, restrict backup rules.",
+      "limitations": "Manifest attributes only; runtime instrumentation protections are not evaluated."
+    }
+  ]
+}

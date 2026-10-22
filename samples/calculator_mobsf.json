@@ -1,0 +1,37 @@
+{
+  "_comment": "Pre-cached MobSF-style report for the synthetic calculator APK. Demo without Docker.",
+  "package_name": "com.synthetic.calculator",
+  "file_name": "calculator.apk",
+  "security_score": 92,
+  "average_cvss": 0,
+  "appsec": {
+    "security_score": 92,
+    "security_score_description": "MobSF's own score, shown as-is. Not blended with PermGuard."
+  },
+  "permissions": {
+    "android.permission.VIBRATE": {
+      "status": "normal",
+      "info": "control vibration",
+      "description": "Allows the app to control the vibrator."
+    }
+  },
+  "manifest_analysis": {
+    "manifest_findings": [
+      {
+        "rule": "clear_text",
+        "title": "No cleartext traffic flag of concern",
+        "stat": "info",
+        "desc": "Calculator sample does not request network access."
+      }
+    ]
+  },
+  "exported_activities": ["com.synthetic.calculator.MainActivity"],
+  "exported_receivers": [],
+  "exported_services": [],
+  "exported_providers": [],
+  "trackers": {
+    "detected_trackers": 0,
+    "total_trackers": 392,
+    "trackers": []
+  }
+}

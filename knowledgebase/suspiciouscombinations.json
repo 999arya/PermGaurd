@@ -1,0 +1,142 @@
+{
+  "version": "1.0.0",
+  "last_verified": "2026-10-15",
+  "disclaimer": "Combination findings are INDICATORS FOR FURTHER REVIEW, NOT proof of malware, surveillance or data exfiltration. A legitimate feature may fully justify any combination.",
+  "combinations": [
+    {
+      "rule_id": "COMBO-LOC-CONTACT-001",
+      "title": "Location combined with contacts",
+      "permissions": ["android.permission.ACCESS_FINE_LOCATION", "android.permission.READ_CONTACTS"],
+      "match_mode": "all",
+      "rationale": "Precise location plus an address book enables building a social-location graph: who the user knows and where both the user and those people are. Neither permission is needed for the other's function, so co-presence deserves review.",
+      "legitimate_justifiers": [
+        "Social/messaging apps showing friends' locations with consent",
+        "Ride-hailing with contact-based pickup sharing",
+        "Family location sharing features"
+      ],
+      "additional_evidence": "In-app consent flow, Data Safety declaration, whether contacts are uploaded",
+      "remediation": "Confirm location is only shared with explicit consent; consider a contact picker instead of full contacts read.",
+      "severity": "HIGH",
+      "expected_categories": ["messaging", "social", "ride_hailing", "family_finder"]
+    },
+    {
+      "rule_id": "COMBO-MIC-BG-001",
+      "title": "Microphone combined with background execution",
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "co_occurrence_any_of": ["android.permission.RECEIVE_BOOT_COMPLETED", "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS", "android.permission.ACCESS_BACKGROUND_LOCATION"],
+      "match_mode": "one_plus_any",
+      "rationale": "Audio capture that can start or persist without the app being in the foreground is the classic covert-surveillance pattern. The pairing warrants review even when each permission is individually plausible.",
+      "legitimate_justifiers": [
+        "Voice recorders that continue with screen off",
+        "Voice calling apps with a visible ongoing notification",
+        "Navigation with spoken guidance (mic not usually needed)"
+      ],
+      "additional_evidence": "Foreground service with persistent notification, user-initiated recording trigger, disclosure UI",
+      "remediation": "Record only while the app is visible or via an explicit user action; show an ongoing recording indicator.",
+      "severity": "CRITICAL",
+      "expected_categories": ["voice_recorder", "messaging"]
+    },
+    {
+      "rule_id": "COMBO-FILE-NET-001",
+      "title": "Broad file access combined with network access",
+      "permissions": ["android.permission.MANAGE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO"],
+      "co_occurrence_any_of": ["android.permission.INTERNET"],
+      "match_mode": "one_plus_any",
+      "rationale": "Unrestricted read access to user files plus a transmission channel creates a direct path for mass data exfiltration. Review what is actually uploaded and whether users are informed.",
+      "legitimate_justifiers": [
+        "Cloud photo backup apps",
+        "File managers with sharing features",
+        "Email clients attaching user-selected files"
+      ],
+      "additional_evidence": "Network destination list, Data Safety form, upload confirmation prompts",
+      "remediation": "Use user-selected files via SAF/Photo Picker, and disclose any upload before it happens.",
+      "severity": "HIGH",
+      "expected_categories": ["photo_editor", "file_manager", "backup", "social", "messaging"]
+    },
+    {
+      "rule_id": "COMBO-SMS-CONTACT-001",
+      "title": "SMS access combined with contacts",
+      "permissions": ["android.permission.READ_SMS", "android.permission.READ_CONTACTS"],
+      "co_occurrence_any_of": ["android.permission.READ_CALL_LOG"],
+      "match_mode": "one_plus_any",
+      "rationale": "Message content plus contact identity plus call history is the full communications dataset — one of the most sensitive aggregates available to an app and heavily restricted by Play policy.",
+      "legitimate_justifiers": [
+        "Default SMS/phone handler apps",
+        "Callers-ID/anti-spam tools"
+      ],
+      "additional_evidence": "Default-handler declaration, whether data leaves the device",
+      "remediation": "Drop SMS/call-log permissions unless the app is genuinely the default handler.",
+      "severity": "CRITICAL",
+      "expected_categories": ["messaging", "dialer"]
+    },
+    {
+      "rule_id": "COMBO-CRITICAL-CLUSTER-001",
+      "title": "Multiple critical permissions without an established purpose",
+      "permissions": ["android.permission.ACCESS_FINE_LOCATION", "android.permission.READ_CONTACTS", "android.permission.RECORD_AUDIO"],
+      "match_mode": "two_plus_of",
+      "rationale": "Two or more of the most sensitive capabilities together, in an app whose purpose does not obviously require them, is a strong over-privilege indicator.",
+      "legitimate_justifiers": [
+        "Full-featured communication or assistance apps"
+      ],
+      "additional_evidence": "Declared category, feature descriptions, data flow review",
+      "remediation": "Strip the least-justified permission first; re-request only at the point of use.",
+      "severity": "HIGH",
+      "expected_categories": []
+    },
+    {
+      "rule_id": "COMBO-INSTALL-NET-001",
+      "title": "Package installation capability with network access",
+      "permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
+      "co_occurrence_any_of": ["android.permission.INTERNET"],
+      "match_mode": "one_plus_any",
+      "rationale": "Downloading and then installing code outside the Play Store is a high-risk combination associated with droppers and update-hijack attacks.",
+      "legitimate_justifiers": [
+        "Enterprise managed-distribution apps",
+        "Self-updating apps distributed outside Play with user consent"
+      ],
+      "additional_evidence": "Download sources, signature verification, user confirmation flow",
+      "remediation": "Use the Play In-App Updates API or link to the store listing instead of installing APKs.",
+      "severity": "CRITICAL",
+      "expected_categories": ["enterprise"]
+    },
+    {
+      "rule_id": "COMBO-OVERLAY-SMS-001",
+      "title": "Screen overlay combined with credential/message access",
+      "permissions": ["android.permission.SYSTEM_ALERT_WINDOW"],
+      "co_occurrence_any_of": ["android.permission.READ_SMS", "android.permission.READ_CONTACTS", "android.permission.READ_CALL_LOG"],
+      "match_mode": "one_plus_any",
+      "rationale": "Drawing over other apps while reading messages enables tap-jacking and capture of text typed elsewhere — a documented phishing technique.",
+      "legitimate_justifiers": ["Caller-ID apps showing a small overlay"],
+      "additional_evidence": "Overlay scope and content, whether sensitive fields are overlaid",
+      "remediation": "Remove SYSTEM_ALERT_WINDOW; use full-screen or notification-based UIs.",
+      "severity": "CRITICAL",
+      "expected_categories": ["accessibility"]
+    },
+    {
+      "rule_id": "COMBO-QUERY-SENSITIVE-001",
+      "title": "Installed-app inventory combined with sensitive data access",
+      "permissions": ["android.permission.QUERY_ALL_PACKAGES"],
+      "co_occurrence_any_of": ["android.permission.READ_CONTACTS", "android.permission.ACCESS_FINE_LOCATION", "android.permission.RECORD_AUDIO"],
+      "match_mode": "one_plus_any",
+      "rationale": "A full installed-app list reveals behavioural traits (health, dating, finance, religion); combined with personal data it substantially increases profiling capability.",
+      "legitimate_justifiers": ["Security products", "Launchers", "Enterprise device managers"],
+      "additional_evidence": "Whether app lists are transmitted, Data Safety declaration",
+      "remediation": "Replace with targeted <queries> declarations.",
+      "severity": "HIGH",
+      "expected_categories": ["security", "file_manager"]
+    },
+    {
+      "rule_id": "COMBO-AUTH-EXFIL-001",
+      "title": "Biometric or device credentials paired with broad outbound access",
+      "permissions": ["android.permission.USE_BIOMETRIC"],
+      "co_occurrence_any_of": ["android.permission.MANAGE_EXTERNAL_STORAGE", "android.permission.QUERY_ALL_PACKAGES"],
+      "match_mode": "one_plus_any",
+      "rationale": "Authentication features plus broad system visibility warrant review of where credential-adjacent data can flow.",
+      "legitimate_justifiers": ["Banking apps with secure containers"],
+      "additional_evidence": "Network endpoints, local encryption implementation",
+      "remediation": "Scope storage and package queries to the minimum needed.",
+      "severity": "MEDIUM",
+      "expected_categories": ["banking", "security"]
+    }
+  ]
+}

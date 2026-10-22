@@ -1,0 +1,5 @@
+# PermGuard serverless runtime dependencies (Python 3.12)
+# Core
+pydantic>=2.5,<3.0
+pyyaml>=6.0,<7.0
+reportlab>=4.0,<5.0

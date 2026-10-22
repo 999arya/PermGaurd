@@ -1,0 +1,49 @@
+# PermissionGuard AI — risk scoring configuration
+#
+# Deterministic scoring: the score is a weighted accumulation of finding
+# contributions, de-duplicated by correlation key and capped so that many
+# low-severity findings cannot bury a critical one.
+#
+# NOTE: these are prototype thresholds, NOT official Google Play or OWASP
+# ratings. Score is NOT a probability of malware.
+
+thresholds:
+  low_max: 29        # 0-29  -> LOW
+  medium_max: 59     # 30-59 -> MEDIUM
+                      # 60-100 -> HIGH
+
+# Base points applied to a finding's contribution, by severity.
+severity_weights:
+  CRITICAL: 30.0
+  HIGH: 18.0
+  MEDIUM: 9.0
+  LOW: 3.0
+  INFO: 0.0
+
+# Confidence multiplies the severity weight (weaker evidence, weaker claim).
+confidence_multiplier:
+  HIGH: 1.0
+  MEDIUM: 0.75
+  LOW: 0.45
+
+# Sensitivity of a permission contributes a smaller, non-finding based
+# baseline component so that raw exposure is reflected even without rules.
+sensitivity_baseline:
+  CRITICAL: 8.0
+  HIGH: 5.0
+  MODERATE: 2.0
+  LOW: 1.0
+  NONE: 0.0
+  # cap on the total baseline contribution
+  baseline_cap: 15.0
+
+# Correlated findings sharing a correlation_key contribute only once
+# (highest contribution wins) -> prevents double counting.
+deduplication:
+  enabled: true
+
+# Anti-burying rule: a CRITICAL finding never allows the total score to be
+# classified LOW, regardless of arithmetic.
+floors:
+  critical_finding_min_score: 60.0     # any CRITICAL -> at least HIGH band
+  high_finding_min_score: 30.0         # any HIGH -> at least MEDIUM band
