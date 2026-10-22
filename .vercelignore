@@ -1,12 +1,13 @@
-.venv
+﻿.venv
 .venv-windows
 __pycache__
 .pytest_cache
 tests
-data
 reports
 uploads
 .env*
-*.apk
-*.aab
 __MACOSX
+data/*.db
+data/scan_cache
+data/dashboard_cache
+app_reference.py

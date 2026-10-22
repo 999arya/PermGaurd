@@ -1,13 +1,9 @@
-{
+﻿{
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "",
-  "outputDirectory": "public",
   "functions": {
-    "api/index.py": {
+    "app.py": {
       "maxDuration": 60,
-      "includeFiles": "{src,knowledgebase,config,samples}/**",
-      "excludeFiles": "{.venv,tests,data,reports}/**"
+      "excludeFiles": "{.venv,.venv-windows,tests,reports,uploads,__MACOSX}/**"
     }
-  },
-  "rewrites": [{ "source": "/api/:path*", "destination": "/api/index" }]
+  }
 }

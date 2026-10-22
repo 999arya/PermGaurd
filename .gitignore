@@ -25,6 +25,7 @@ uploads/
 data/scans.db
 data/*.db
 data/scan_cache/
+data/dashboard_cache/
 
 # Generated reports (may contain user data)
 reports/*
@@ -43,3 +44,7 @@ __MACOSX/
 node_modules/
 *.key
 *.pem
+# Flask dashboard local-only data
+app_reference.py
+# Tiny synthetic fixtures are shipped for the original demo buttons.
+!data/sampleapps/*.apk
