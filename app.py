@@ -25,12 +25,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from src.knowledgebase import load_knowledgebase
 from src.models import AssessmentStatus, Finding, ScanResult, Severity
 from src.mobsfevidence import build_evidence
+from src.pandaspreload import preload_pandas
 from src.pipeline import ScanError, run_scan, save_upload
 from src.purposeanalyzer import infer_category, list_categories
 from src.reportgenerator import to_csv, to_json, to_pdf
 from src.safetips import tip_for
 from src.scancache import ScanCache, sha256_bytes
 from src.storage import ScanStore
+
+# Load pandas once per process, before any st.dataframe call can trigger
+# Streamlit's lazy (and thread-unsafe) import. See src/pandaspreload.py.
+preload_pandas()
 
 # ---------------------------------------------------------------------------
 # page config & styles
