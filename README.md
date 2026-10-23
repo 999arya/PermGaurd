@@ -1,18 +1,24 @@
 ﻿# PermGuard
 
-Android permission and privacy-risk analysis. The original dashboard presentation and analysis flow are preserved in `dashboard.py`; its UI import now targets the Flask renderer instead of Streamlit. The original labels, defaults, sample selection, organisation-policy controls, reports, and charts remain in that source.
+Android permission and privacy-risk analysis. The original Streamlit dashboard is restored in `streamlit_app.py`, recovered from commit `72739f1`. It uses the original widgets, layout, analysis engine, charts, and reports directly.
 
 ## Run locally
 
 ```powershell
 py -3.12 -m venv .venv-windows
 .venv-windows/Scripts/python -m pip install -r requirements-local.txt
-.venv-windows/Scripts/python app.py
+.venv-windows/Scripts/python -m streamlit run streamlit_app.py --server.port 8502
 ```
 
-Open http://127.0.0.1:8501. The existing VS Code **Run PermGuard** task uses the same entry point. Local scans use SQLite history and the original file cache. Uploaded files are removed by the scan pipeline after analysis. Local folder scanning and MobSF remain available as in the original dashboard.
+Open http://127.0.0.1:8502. The VS Code **Run PermGuard** task starts this original dashboard. Uploads support up to 250 MiB per file, matching the existing analysis engine limit; files are not unlimited. The configuration is in `.streamlit/config.toml`. Local scans use SQLite history and the original file cache. Uploaded files are removed by the scan pipeline after analysis. Local folder scanning and MobSF remain available.
 
-## Deploy on Vercel
+## Host the original Streamlit app
+
+The included `render.yaml` starts the original dashboard as a persistent web service. In Render, create a Blueprint using this repository after pushing these changes. The build installs `requirements-local.txt` and starts `streamlit_app.py`. This requires a separate hosting deployment; it does not update the existing Vercel URL. Hosting memory, disk, and proxy limits still apply. A free instance may be insufficient for very large APKs or concurrent scans, and local history/cache are not durable across replacement of its filesystem.
+
+Vercel Functions cannot host this persistent Streamlit server. Their request payload limit cannot be increased by changing Flask's upload setting. Use the Streamlit deployment for larger APKs.
+
+## Legacy Flask deployment on Vercel
 
 1. Import https://github.com/999arya/PermGaurd into Vercel.
 2. Select the repository root containing `app.py`, `requirements.txt`, and `vercel.json`. Choose the **Flask** framework preset. Clear any old `public` Output Directory override or old static-site build settings.
@@ -20,7 +26,7 @@ Open http://127.0.0.1:8501. The existing VS Code **Run PermGuard** task uses the
 4. Deploy. Vercel detects the Flask `app` exported by `app.py`. `/api/health` returns `{"status":"ok"}` once configuration is complete.
 5. Select **Flashlight**, then **Analyze Permissions**. Verify Summary/Apps/Details and **Prepare PDF**.
 
-Vercel serves the same original dashboard rather than a separate reduced frontend. Static scripts, fonts, and Plotly are served from `public/_ui`.
+This serves the Flask adapter, not the original Streamlit renderer. It remains available for compatibility but retains the small hosted request limit. Static scripts, fonts, and Plotly are served from `public/_ui`.
 
 ### Hosted constraints
 

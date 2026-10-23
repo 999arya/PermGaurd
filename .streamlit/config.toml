@@ -1,0 +1,7 @@
+[server]
+headless = true
+# Match the original analysis engine's 250 MiB APK validation limit.
+maxUploadSize = 250
+
+[theme]
+base = "dark"

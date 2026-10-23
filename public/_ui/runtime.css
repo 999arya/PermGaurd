@@ -2,6 +2,8 @@
 /* Match the original renderer's typography and fixed content column. */
 .ui-root{max-width:680px;margin-left:auto;margin-right:auto;gap:16px}
 .ui-stack{width:100%}
+.pg-drop-prompt[role=button]{cursor:pointer}
+.pg-drop-prompt[role=button]:focus-visible{outline:2px solid #58a6ff;outline-offset:4px}
 [data-testid=stMarkdown]{font-family:"Source Sans",sans-serif}
 [data-testid=stMarkdown] p{font-family:"Source Sans",sans-serif;font-size:16px;margin-bottom:16px}
 [data-testid=stMarkdown] p.pg-eyebrow{margin:0}
