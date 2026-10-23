@@ -1,4 +1,4 @@
-﻿# Runtime dependencies for Flask, including Vercel.
+# Runtime dependencies for Flask, including Vercel.
 pydantic>=2.5,<3.0
 pyyaml>=6.0,<7.0
 reportlab>=4.0,<5.0
