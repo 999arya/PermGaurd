@@ -78,7 +78,6 @@ __MACOSX/
 *.cert
 
 # Cloud deployment artifacts
-.vercel/
 .render/
 node_modules/
 
