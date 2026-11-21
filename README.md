@@ -6,14 +6,15 @@
 
 [![Python Versions](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Tests Passing](https://img.shields.io/badge/tests-120%20passed-brightgreen.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-126%20passed-brightgreen.svg)](tests/)
 [![Security Standard](https://img.shields.io/badge/compliance-OWASP%20MASVS%20%7C%20Google%20Play-orange.svg)](knowledgebase/)
 [![Framework](https://img.shields.io/badge/ui-Streamlit-red.svg)](streamlit_app.py)
 [![Cloud Deploy](https://img.shields.io/badge/deploy-Render-blueviolet.svg)](render.yaml)
+[![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)](Dockerfile)
 
 *Automate mobile security audits, detect overprivileged APKs, flag toxic permission combinations, and verify OWASP & Google Play compliance — in seconds.*
 
-[Key Capabilities](#key-capabilities) • [Architecture](#architecture) • [Quickstart](#quickstart) • [Render Deployment](#render-deployment) • [Enterprise Policy](#enterprise-policy--configuration) • [Verification](#verification)
+[Key Capabilities](#key-capabilities) • [Architecture](#architecture) • [Quickstart](#quickstart) • [CLI Scanner](#cli-scanner--cicd-gating) • [Render Deployment](#render-deployment) • [Docker](#docker-container) • [Verification](#verification)
 
 ---
 
@@ -21,9 +22,9 @@
 
 ## Overview
 
-**PermGuard** is an automated, zero-execution static security analyzer for Android applications (`.apk`, `.aab`, `AndroidManifest.xml`, or permission manifests). Built for application security teams, mobile developers, and compliance auditors, PermGuard identifies privacy leaks, dangerous permission combinations, and privilege escalation vulnerabilities before apps reach production.
+**PermGuard** is an automated, zero-execution static security analyzer for Android applications (`.apk`, `.aab`, `AndroidManifest.xml`, or permission manifests). Built for application security teams, mobile developers, and DevSecOps pipelines, PermGuard identifies privacy leaks, dangerous permission combinations, and privilege escalation vulnerabilities before apps reach production.
 
-Traditional mobile scanners are often slow, resource-heavy, or require live device emulation. PermGuard delivers instant, transparent, mathematical risk assessments (0–100 scale) with multi-factor evidence, actionable remediation steps, and audit-ready executive PDF reports.
+Traditional mobile scanners are often slow, resource-heavy, or require live device emulation. PermGuard delivers instant, transparent, mathematical risk assessments (0–100 scale) with multi-factor evidence, actionable remediation steps, audit-ready executive PDF reports, and automated CI/CD gating.
 
 ---
 
@@ -35,6 +36,7 @@ Traditional mobile scanners are often slow, resource-heavy, or require live devi
 - **Privilege Escalation & Root Vulnerability Scanning**: Flags exported components (services, activities, content providers), shared user IDs, cleartext HTTP traffic, root binaries, and known Linux kernel CVE patterns.
 - **Regulatory & Marketplace Compliance**: Automated checks against **OWASP MASVS** (Mobile Application Security Verification Standard) and **Google Play Developer Policies**.
 - **Interactive Security Dashboard**: Rich Plotly visualizations, side-by-side multi-APK comparison, SQLite scan history, and interactive policy inspector powered by Streamlit.
+- **CI/CD Command-Line Interface (`cli.py`)**: Headless terminal scanner with customizable failure thresholds (`--fail-on-critical`, `--max-score`) for automated DevSecOps pipelines.
 - **Executive & Compliance Reporting**: Generates branded, board-ready PDF reports (via ReportLab), machine-readable JSON security manifests, and CSV compliance audits.
 - **Optional MobSF Cross-Correlation**: Ingests and correlates dynamic/static findings from existing Mobile Security Framework (MobSF) deployments.
 
@@ -73,6 +75,7 @@ flowchart TD
     
     O --> P["Executive PDF Report (ReportLab)"]
     O --> Q["Interactive Streamlit Dashboard (Local & Render)"]
+    O --> R["CLI Scanner & CI/CD Gates"]
     O --> S["JSON / CSV Audit Exports"]
 ```
 
@@ -121,9 +124,30 @@ Open **`http://127.0.0.1:8501`** in your browser:
 
 ---
 
+## CLI Scanner & CI/CD Gating
+
+PermGuard includes a dedicated command-line interface ([`cli.py`](cli.py)) for scanning applications directly in terminal environments, pre-commit hooks, or build pipelines:
+
+```bash
+# Basic scan with terminal summary
+python cli.py path/to/app.apk
+
+# Declare app category for purpose-aware overprivilege detection
+python cli.py path/to/app.apk --category calculator
+
+# Export PDF, JSON, or CSV audit reports
+python cli.py path/to/app.apk -o audit_report.pdf
+python cli.py path/to/app.apk -o audit_report.json
+
+# CI/CD Quality Gate: fail the build if risk score exceeds 50 or any CRITICAL finding is found
+python cli.py path/to/app.apk --fail-on-critical --max-score 50.0
+```
+
+---
+
 ## Render Deployment
 
-PermGuard is configured for one-click deployment to [Render](https://render.com/) via the included `render.yaml` Blueprint.
+PermGuard is configured for one-click deployment to [Render](https://render.com/) via the included [`render.yaml`](render.yaml) Blueprint.
 
 ### Deploy Steps:
 
@@ -139,15 +163,37 @@ PermGuard is configured for one-click deployment to [Render](https://render.com/
 
 ---
 
+## Docker Container
+
+PermGuard includes an enterprise-ready [`Dockerfile`](Dockerfile) adhering to container security best practices (unprivileged non-root user, slim base image, automated health checks):
+
+```bash
+# Build Docker image
+docker build -t permguard:latest .
+
+# Run container
+docker run -d -p 8501:8501 --name permguard permguard:latest
+```
+
+Access the dashboard at `http://localhost:8501`.
+
+---
+
 ## Project Structure
 
 ```
 ├── app.py                      # Application CLI entrypoint (python app.py)
 ├── streamlit_app.py            # Primary interactive Streamlit dashboard
+├── cli.py                      # Standalone CLI scanner with CI/CD failure gates
 ├── render.yaml                 # Render Blueprint specification for cloud hosting
+├── Dockerfile                  # Secure container definition (non-root, health checked)
+├── .dockerignore               # Container build exclusion list
 ├── pyproject.toml              # Modern Python packaging & tool configurations
 ├── requirements.txt            # Production runtime dependencies
 ├── requirements-local.txt      # Development dependencies (with pytest)
+│
+├── .github/workflows/          # Automated GitHub Actions CI workflow
+│   └── ci.yml                  # Multi-version matrix test runner (Python 3.10-3.13)
 │
 ├── config/                     # Enterprise customizable policies
 │   ├── appconfig.yaml          # Upload limits, cache sizes, and scan limits
@@ -185,64 +231,39 @@ PermGuard is configured for one-click deployment to [Render](https://render.com/
 │   └── scancache.py            # File hash caching layer
 │
 ├── data/sampleapps/            # Synthetic test APKs and fixtures
-├── tests/                      # Automated test suite (120 tests)
+├── tests/                      # Automated test suite (126 tests)
+│   ├── test_cli.py             # CLI tests and CI/CD gate assertions
+│   └── ...                     # Core engine, detector, and security tests
 └── tools/                      # Fixture generation and maintenance utilities
-```
-
----
-
-## Enterprise Policy & Configuration
-
-PermGuard allows security teams to enforce custom organizational compliance policies without writing code:
-
-### Custom Enterprise Policy (`config/orgpolicy.yaml`)
-Define explicitly banned permissions, require explicit justification, or mandate specific protection levels:
-```yaml
-rules:
-  - id: ORG-001
-    name: "Disallow Unapproved SMS Access"
-    banned_permissions:
-      - android.permission.SEND_SMS
-      - android.permission.RECEIVE_SMS
-    severity: CRITICAL
-```
-
-### Risk Thresholds (`config/riskthresholds.yaml`)
-Tune how severity bands and scoring penalties map into your risk posture:
-```yaml
-bands:
-  low: [0, 25]
-  medium: [26, 50]
-  high: [51, 75]
-  critical: [76, 100]
 ```
 
 ---
 
 ## Verification & Testing
 
-PermGuard includes a comprehensive automated test suite covering all analysis pipelines, parsers, security boundaries, and report generation:
+PermGuard includes an automated test suite covering all analysis pipelines, parsers, security boundaries, report generation, and CLI interfaces:
 
 ```bash
-# Run complete test suite (120 tests)
+# Run complete test suite (126 tests)
 pytest tests -v
 ```
 
 ```
 ============================== test session starts ==============================
-collected 120 items
+collected 126 items
 
-tests/test_detectors.py ...................                               [ 16%]
-tests/test_e2e.py .............                                           [ 27%]
-tests/test_inputparsers.py ..............                                  [ 38%]
-tests/test_manifestparser.py ...........                                  [ 48%]
-tests/test_permissionclassifier.py ............                           [ 58%]
-tests/test_policyengine.py ..............                                  [ 69%]
-tests/test_reportgenerator.py ............                                 [ 79%]
-tests/test_riskengine.py ..............                                    [ 90%]
+tests/test_cli.py ......                                                  [  4%]
+tests/test_detectors.py ...................                               [ 19%]
+tests/test_e2e.py .............                                           [ 30%]
+tests/test_inputparsers.py ..............                                  [ 41%]
+tests/test_manifestparser.py ...........                                  [ 50%]
+tests/test_permissionclassifier.py ............                           [ 59%]
+tests/test_policyengine.py ..............                                  [ 70%]
+tests/test_reportgenerator.py ............                                 [ 80%]
+tests/test_riskengine.py ..............                                    [ 91%]
 tests/test_security.py ............                                       [100%]
 
-============================== 120 passed in 3.4s ===============================
+============================== 126 passed in 1.3s ===============================
 ```
 
 ---

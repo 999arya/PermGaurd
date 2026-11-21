@@ -150,7 +150,8 @@ def test_no_network_imports_in_source():
               "ftplib", "telnetlib", "smtplib")
     offenders = []
     for path in glob.glob(os.path.join(root, "src", "*.py")):
-        text = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read()
         for mod in banned:
             # match `import mod` / `from mod import` statements only
             for needle in (f"import {mod}", f"from {mod} import"):
