@@ -36,6 +36,7 @@ Traditional mobile scanners are often slow, resource-heavy, or require live devi
 - **Privilege Escalation & Root Vulnerability Scanning**: Flags exported components (services, activities, content providers), shared user IDs, cleartext HTTP traffic, root binaries, and known Linux kernel CVE patterns.
 - **Regulatory & Marketplace Compliance**: Automated checks against **OWASP MASVS** (Mobile Application Security Verification Standard) and **Google Play Developer Policies**.
 - **Interactive Security Dashboard**: Rich Plotly visualizations, side-by-side multi-APK comparison, SQLite scan history, and interactive policy inspector powered by Streamlit.
+- **Animated Starfield UI**: A visible, slow-moving CSS starfield with gentle twinkling and reduced-motion support.
 - **CI/CD Command-Line Interface (`cli.py`)**: Headless terminal scanner with customizable failure thresholds (`--fail-on-critical`, `--max-score`) for automated DevSecOps pipelines.
 - **Executive & Compliance Reporting**: Generates branded, board-ready PDF reports (via ReportLab), machine-readable JSON security manifests, and CSV compliance audits.
 - **Optional MobSF Cross-Correlation**: Ingests and correlates dynamic/static findings from existing Mobile Security Framework (MobSF) deployments.
