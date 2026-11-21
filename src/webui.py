@@ -1,4 +1,4 @@
-﻿"""Flask renderer for the dashboard's existing declarative UI calls.
+"""Flask renderer for the dashboard's existing declarative UI calls.
 
 The analysis and presentation code lives unchanged in dashboard.py. This module
 only supplies widgets, layout, state and events; it does not implement analysis.

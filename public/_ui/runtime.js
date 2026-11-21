@@ -1,4 +1,4 @@
-﻿let pending=false;
+let pending=false;
 const tabState={};
 const retainedFiles=new Map();
 function initialize(){

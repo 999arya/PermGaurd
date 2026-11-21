@@ -1,6 +1,6 @@
-"""PermissionGuard AI — Streamlit dashboard.
+"""PermGuard — Enterprise Streamlit Security & Privacy Dashboard.
 
-Run:  .venv/bin/streamlit run app.py
+Run:  streamlit run streamlit_app.py
 
 All displayed values come from real scan results (or clearly labelled
 synthetic demo fixtures). Nothing is hardcoded as if it were a scan.

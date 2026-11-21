@@ -1,4 +1,4 @@
-﻿"""The Flask renderer preserves original controls, events and report views."""
+"""The Flask renderer preserves original controls, events and report views."""
 import hashlib
 import json
 import re

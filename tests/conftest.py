@@ -13,6 +13,10 @@ if ROOT not in sys.path:
 
 from tools.build_fixtures import FIXTURES, build_apk  # noqa: E402
 from src.knowledgebase import load_knowledgebase  # noqa: E402
+from src.pandaspreload import preload_pandas  # noqa: E402
+
+# Ensure pandas is preloaded under process lock before concurrent tests execute
+preload_pandas()
 
 
 @pytest.fixture(scope="session")

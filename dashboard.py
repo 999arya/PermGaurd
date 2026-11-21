@@ -1,6 +1,6 @@
-"""PermissionGuard AI — Streamlit dashboard.
+"""PermGuard — Enterprise Dashboard Core (Flask / Web UI runtime adapter).
 
-Run:  .venv/bin/streamlit run app.py
+Run:  python app.py
 
 All displayed values come from real scan results (or clearly labelled
 synthetic demo fixtures). Nothing is hardcoded as if it were a scan.
